@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fbbf24" />
+    <meta name="description" content="Calendário com To-Do List e Notificações" />
+    <link rel="manifest" href="manifest.json" />
     <title>Calendário com To-Do List</title>
     <link rel="stylesheet" href="style.css" />
-    <script defer src="script.js"></script>
-
 </head>
 <body>
     <div class="app">
+        <!-- Banner de Alerta para Tarefas Urgentes -->
+        <div id="alertBanner" class="alert-banner hidden">
+            <span style="font-size: 1.5rem;">⚠️</span>
+            <span id="alertText"></span>
+        </div>
+
         <div class="top-controls">
             <div class="view-toggle">
                 <button id="monthViewBtn" class="active">📅 Mensal</button>
                 <button id="weekViewBtn">📊 Semanal</button>
             </div>
-            <button class="theme-toggle" id="themeToggle">🌙</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+            </div>
         </div>
 
         <header>
@@ -35,7 +44,6 @@
 
             <div class="notification-controls">
                 <input type="time" id="notificationTime" />
-                <button id="enableNotifications">🔔 Ativar Lembretes</button>
             </div>
 
             <div class="todo-input">
@@ -45,6 +53,18 @@
 
             <ul id="todoList"></ul>
         </div>
+        <br>
+        <!-- Lista de Tarefas Pendentes Hoje -->
+        <div id="pendingTasks" class="pending-tasks hidden">
+            <h3>
+                <span>📋</span>
+                <span>Tarefas Pendentes Hoje</span>
+            </h3>
+            <div id="pendingTasksList"></div>
+        </div>
+
     </div>
+
+    <script defer src="script.js"></script>
 </body>
 </html>
