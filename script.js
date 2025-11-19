@@ -13,6 +13,7 @@ const themeToggle = document.getElementById("themeToggle");
 const monthViewBtn = document.getElementById("monthViewBtn");
 const weekViewBtn = document.getElementById("weekViewBtn");
 const notificationTime = document.getElementById("notificationTime");
+const enableNotificationsBtn = document.getElementById("enableNotifications");
 const alertBanner = document.getElementById("alertBanner");
 const alertText = document.getElementById("alertText");
 const pendingTasks = document.getElementById("pendingTasks");
@@ -21,6 +22,7 @@ const pendingTasksList = document.getElementById("pendingTasksList");
 let currentDate = new Date();
 let selectedDate = null;
 let viewMode = "month";
+let notificationsEnabled = false;
 
 // Dark Mode
 const savedTheme = localStorage.getItem("theme") || "light";
@@ -50,6 +52,47 @@ weekViewBtn.addEventListener("click", () => {
     monthViewBtn.classList.remove("active");
     loadView();
 });
+
+// Notifications
+enableNotificationsBtn.addEventListener("click", async () => {
+    if ("Notification" in window) {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+            notificationsEnabled = true;
+            enableNotificationsBtn.textContent = "✅ Lembretes Ativos";
+            enableNotificationsBtn.style.background = "#10b981";
+            scheduleNotifications();
+        }
+    } else {
+        alert("Seu navegador não suporta notificações");
+    }
+});
+
+function scheduleNotifications() {
+    const todos = JSON.parse(localStorage.getItem("todos") || "{}");
+            
+    Object.keys(todos).forEach(dateKey => {
+        todos[dateKey].forEach(todo => {
+            if (todo.notificationTime && !todo.done) {
+                const [year, month, day] = dateKey.split("-");
+                const [hours, minutes] = todo.notificationTime.split(":");
+                const notifDate = new Date(year, month - 1, day, hours, minutes);
+                        
+                const now = new Date();
+                const timeUntil = notifDate - now;
+                        
+                if (timeUntil > 0) {
+                    setTimeout(() => {
+                        new Notification("📝 Lembrete de Tarefa", {
+                            body: todo.text,
+                            icon: "https://cdn-icons-png.flaticon.com/512/2387/2387635.png"
+                        });
+                    }, timeUntil);
+                }
+            }
+        });
+    });
+}
 
 // Verifica tarefas urgentes e pendentes
 function checkUrgentTasks() {
@@ -354,6 +397,10 @@ function addTodo() {
     notificationTime.value = "";
     loadTodos();
     loadView();
+
+    if (notificationsEnabled) {
+        scheduleNotifications();
+    }
 }
 
 function toggleTodo(id) {
@@ -403,6 +450,13 @@ nextBtn.addEventListener("click", () => {
 
 // Initialize
 loadView();
+
+if (Notification.permission === "granted") {
+    notificationsEnabled = true;
+    enableNotificationsBtn.textContent = "✅ Lembretes Ativos";
+    enableNotificationsBtn.style.background = "#10b981";
+    scheduleNotifications();
+}
 
 // Verifica tarefas urgentes a cada minuto
 setInterval(checkUrgentTasks, 60000);
