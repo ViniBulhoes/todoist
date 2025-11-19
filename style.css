@@ -416,6 +416,17 @@ header h1 {
     font-size: 0.9rem;
 }
 
+.notification-controls button {
+    padding: 10px 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
 #todoList li {
     list-style: none;
     padding: 15px;
