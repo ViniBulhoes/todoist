@@ -3,66 +3,135 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#fbbf24" />
+    <meta name="theme-color" content="#6366f1" />
     <meta name="description" content="Calendário com To-Do List e Notificações" />
-    <title>Calendário com To-Do List</title>
+    <title>Calendário To-Do</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="app">
         <!-- Banner de Alerta para Tarefas Urgentes -->
         <div id="alertBanner" class="alert-banner hidden">
-            <span style="font-size: 1.5rem;">⚠️</span>
+            <span class="alert-icon">⚠️</span>
             <span id="alertText"></span>
+            <button class="alert-close" onclick="this.parentElement.classList.add('hidden')">✕</button>
         </div>
 
         <div class="top-controls">
-            <div class="view-toggle">
-                <button id="monthViewBtn" class="active">📅 Mensal</button>
-                <button id="weekViewBtn">📊 Semanal</button>
+            <div class="brand">
+                <span class="brand-icon">✦</span>
+                <span class="brand-name">Planner</span>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="theme-toggle" id="themeToggle">🌙</button>
+            <div class="controls-right">
+                <div class="view-toggle">
+                    <button id="monthViewBtn" class="active">Mensal</button>
+                    <button id="weekViewBtn">Semanal</button>
+                </div>
+                <button class="icon-btn" id="todayBtn" title="Ir para hoje">⌂</button>
+                <button class="icon-btn" id="searchToggle" title="Buscar tarefas">⌕</button>
+                <button class="icon-btn theme-toggle" id="themeToggle">◑</button>
+                <button class="icon-btn" id="settingsToggle" title="Configurações">⚙</button>
             </div>
         </div>
 
+        <!-- Modal de Configurações -->
+        <div id="settingsOverlay" class="settings-overlay hidden"></div>
+        <div id="settingsModal" class="settings-modal hidden">
+            <div class="settings-header">
+                <h2>⚙ Configurações</h2>
+                <button class="close-btn" id="closeSettings">✕</button>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-title">Paleta de Cores</div>
+                <div class="palette-grid" id="paletteGrid">
+                    <button class="palette-option" data-palette="indigo" title="Índigo">
+                        <span class="palette-swatch" style="background:#6366f1"></span>
+                        <span>Índigo</span>
+                    </button>
+                    <button class="palette-option" data-palette="original" title="Rosa & Amarelo">
+                        <span class="palette-swatch" style="background:linear-gradient(135deg,#fbbf24 50%,#ec4899 50%)"></span>
+                        <span>Rosa & Amarelo</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-title">Dados</div>
+                <button id="clearDataBtn" class="settings-danger-btn">🗑 Apagar todas as tarefas</button>
+            </div>
+        </div>
+
+        <!-- Busca -->
+        <div id="searchPanel" class="search-panel hidden">
+            <input type="text" id="searchInput" placeholder="Buscar tarefas..." autocomplete="off" />
+            <div id="searchResults" class="search-results"></div>
+        </div>
+
         <header>
-            <button class="nav-btn" id="prevBtn">◀</button>
-            <h1 id="monthYear"></h1>
-            <button class="nav-btn" id="nextBtn">▶</button>
+            <button class="nav-btn" id="prevBtn">‹</button>
+            <div class="header-center">
+                <h1 id="monthYear"></h1>
+                <div id="statsBar" class="stats-bar"></div>
+            </div>
+            <button class="nav-btn" id="nextBtn">›</button>
         </header>
+
+        <div class="weekday-labels" id="weekdayLabels">
+            <span>Dom</span><span>Seg</span><span>Ter</span>
+            <span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+        </div>
 
         <div id="calendar"></div>
         <div id="weekView"></div>
 
         <div id="todoPanel" class="hidden">
             <div class="todo-header">
-                <h2 id="selectedDate"></h2>
+                <div class="todo-header-info">
+                    <h2 id="selectedDate"></h2>
+                    <div id="dayStats" class="day-stats"></div>
+                </div>
                 <button class="close-btn" id="closeTodo">✕</button>
             </div>
 
             <div class="notification-controls">
-                <input type="time" id="notificationTime" />
-                 <button id="enableNotifications">🔔 Ativar Lembretes</button>
+                <div class="time-input-wrapper">
+                    <span class="input-icon">🕐</span>
+                    <input type="time" id="notificationTime" />
+                </div>
+                <div class="priority-selector">
+                    <button class="priority-btn active" data-priority="low">Baixa</button>
+                    <button class="priority-btn" data-priority="medium">Média</button>
+                    <button class="priority-btn" data-priority="high">Alta</button>
+                </div>
+                <button id="enableNotifications">🔔 Lembretes</button>
             </div>
 
             <div class="todo-input">
-                <input type="text" id="todoText" placeholder="Nova tarefa..." />
+                <input type="text" id="todoText" placeholder="Adicionar nova tarefa..." maxlength="120" />
                 <button id="addTodo">+</button>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">Todas</button>
+                <button class="filter-btn" data-filter="pending">Pendentes</button>
+                <button class="filter-btn" data-filter="done">Concluídas</button>
             </div>
 
             <ul id="todoList"></ul>
         </div>
-        <br>
+
         <!-- Lista de Tarefas Pendentes Hoje -->
         <div id="pendingTasks" class="pending-tasks hidden">
             <h3>
                 <span>📋</span>
-                <span>Tarefas Pendentes Hoje</span>
+                <span>Tarefas de Hoje</span>
             </h3>
             <div id="pendingTasksList"></div>
         </div>
-
     </div>
 
     <script defer src="script.js"></script>
