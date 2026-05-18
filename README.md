@@ -1,4 +1,4 @@
-# 📅 Task Calendar
+# 📅 Planner
 
 Um calendário inteligente de tarefas inspirado no Todoist, desenvolvido com HTML, CSS e JavaScript. O sistema permite organizar compromissos e atividades em visualizações semanais e mensais, utilizando prioridades e organização visual para aumentar a produtividade.
 
